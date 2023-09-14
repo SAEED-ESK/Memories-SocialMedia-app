@@ -7,7 +7,9 @@ const getPosts = async (req, res) => {
 };
 
 const createPosts = async (req, res) => {
-  const post = new PostMessage(req.body);
+  const data = req.body;
+  console.log(req.userId);
+  const post = new PostMessage({ ...data, creator: req.userId });
   await post.save();
   res.json(post);
 };
@@ -25,9 +27,23 @@ const updatePosts = async (req, res) => {
 
 const likePosts = async (req, res) => {
   const _id = req.params.id;
+
+  if (!req.userId) return res.json({ message: "Unauthenticated" });
+
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).json("Invalid post id!");
   const post = await PostMessage.findById(_id);
+
+  const index = post.likes.findIndex((_id) => _id === String(req.userId));
+  if (!index) {
+    // like the post
+    post.likes.push(_id);
+  } else {
+    // dislike the post
+    // post.likes.splice(index, 1);
+    post.like = post.likes.filter((id) => id !== String(req.userId));
+  }
+
   const updatedPost = await PostMessage.findByIdAndUpdate(
     _id,
     { likeCount: post.likeCount + 1 },
