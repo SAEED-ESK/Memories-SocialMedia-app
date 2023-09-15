@@ -24,21 +24,22 @@ const jwt = require("jsonwebtoken");
 //   next();
 // };
 
-function auth(req, res, next) {
+const auth = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) {
     return res.status(401).send("Access Denied");
   } else {
-    token = token.split(" ")[1];
-  }
+    const authToken = token.split(" ")[1];
 
-  try {
-    const decode = jwt.verify(token, "test"); // config.get('jwtPrivateKey')
-    req.userId = decodedToken?.id;
-    next();
-  } catch (error) {
-    res.status(401).send("Invalid Token");
+    try {
+      const decodedToken = jwt.verify(authToken, "test"); // config.get('jwtPrivateKey')
+      req.userId = decodedToken?.id;
+      next();
+    } catch (error) {
+      res.status(401).send("Invalid Token");
+      console.log(error);
+    }
   }
-}
+};
 
 module.exports = auth;

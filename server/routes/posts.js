@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getPosts,
+  getPostsBySearch,
   createPosts,
   updatePosts,
   deletePosts,
@@ -11,6 +12,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/", getPosts);
+router.get("/search", getPostsBySearch);
 router.post("/", auth, createPosts);
 router.put("/:id", auth, updatePosts);
 router.delete("/:id", auth, deletePosts);

@@ -6,6 +6,18 @@ const getPosts = async (req, res) => {
   res.json(posts);
 };
 
+const getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+  console.log(req.query);
+  const title = new RegExp(searchQuery, "i");
+  const tag = tags ? tags.split(",") : undefined;
+  console.log(tag);
+  const posts = await PostMessage.find({
+    $or: [{ title }, { tags: { $in: tag } }],
+  });
+  res.json({ data: posts });
+};
+
 const createPosts = async (req, res) => {
   const data = req.body;
   console.log(req.userId);
@@ -64,6 +76,7 @@ const deletePosts = async (req, res) => {
 
 module.exports = {
   getPosts,
+  getPostsBySearch,
   createPosts,
   updatePosts,
   likePosts,
