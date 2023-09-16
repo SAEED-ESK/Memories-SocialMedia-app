@@ -2,8 +2,21 @@ const PostMessage = require("../models/postMessage");
 const mongoose = require("mongoose");
 
 const getPosts = async (req, res) => {
-  const posts = await PostMessage.find();
-  res.json(posts);
+  const { page } = req.query;
+
+  const LIMIT = 1;
+  const startIndex = (Number(page) - 1) * LIMIT;
+  const total = await PostMessage.countDocuments({});
+
+  const posts = await PostMessage.find()
+    .sort({ _id: -1 })
+    .limit(LIMIT)
+    .skip(startIndex);
+  res.json({
+    data: posts,
+    currentPage: Number(page),
+    numberOfPage: Math.ceil(total / LIMIT),
+  });
 };
 
 const getPostsBySearch = async (req, res) => {
