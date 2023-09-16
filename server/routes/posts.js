@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getPosts,
+  getPost,
   getPostsBySearch,
   createPosts,
   updatePosts,
@@ -12,6 +13,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/", getPosts);
+router.get("/:id", getPost);
 router.get("/search", getPostsBySearch);
 router.post("/", auth, createPosts);
 router.put("/:id", auth, updatePosts);

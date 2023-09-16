@@ -19,6 +19,13 @@ const getPosts = async (req, res) => {
   });
 };
 
+const getPost = async (req, res) => {
+  const { id } = req.params;
+
+  const post = await PostMessage.findById(id);
+  res.json({ data: post });
+};
+
 const getPostsBySearch = async (req, res) => {
   const { searchQuery, tags } = req.query;
   console.log(req.query);
@@ -89,6 +96,7 @@ const deletePosts = async (req, res) => {
 
 module.exports = {
   getPosts,
+  getPost,
   getPostsBySearch,
   createPosts,
   updatePosts,
