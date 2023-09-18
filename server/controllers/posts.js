@@ -28,19 +28,16 @@ const getPost = async (req, res) => {
 
 const getPostsBySearch = async (req, res) => {
   const { searchQuery, tags } = req.query;
-  console.log(req.query);
   const title = new RegExp(searchQuery, "i");
-  const tag = tags ? tags.split(",") : undefined;
-  console.log(tag);
+
   const posts = await PostMessage.find({
-    $or: [{ title }, { tags: { $in: tag } }],
+    $or: [{ title }, { tags: { $in: tags?.split(",") } }],
   });
   res.json({ data: posts });
 };
 
 const createPosts = async (req, res) => {
   const data = req.body;
-  console.log(req.userId);
   const post = new PostMessage({ ...data, creator: req.userId });
   await post.save();
   res.json(post);
@@ -86,6 +83,18 @@ const likePosts = async (req, res) => {
   res.json(updatedPost);
 };
 
+const commentPost = async (req, res) => {
+  const { id } = req.params;
+  const { value } = req.body;
+
+  const post = await PostMessage.findById(id);
+  post.comments.push(value);
+  const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {
+    new: true,
+  });
+  res.json(updatedPost);
+};
+
 const deletePosts = async (req, res) => {
   const _id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(_id))
@@ -101,5 +110,6 @@ module.exports = {
   createPosts,
   updatePosts,
   likePosts,
+  commentPost,
   deletePosts,
 };
